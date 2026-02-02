@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-
 import 'package:get/get.dart';
-
 import '../controllers/home_controller.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HomeView extends GetView<HomeController> {
   const HomeView({super.key});
@@ -76,9 +75,12 @@ class HomeView extends GetView<HomeController> {
                           ),
                           Padding(
                             padding: const EdgeInsets.all(12.0),
-                            child: Text(
-                              news.title ?? "No Title",
-                              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                            child: InkWell(
+                              onTap: () => _openLink(news.url ?? ""),
+                              child: Text(
+                                news.title ?? "No Title",
+                                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                              ),
                             ),
                           ),
                         ],
@@ -92,5 +94,16 @@ class HomeView extends GetView<HomeController> {
         );
       }),
     );
+  }
+}
+
+Future _openLink(String url) async {
+  if(url != null && url != "") {
+    final uri = Uri.parse(url);
+    if(await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    }else{
+      Get.snackbar("error", "url tidak bisa dibuka");
+    }
   }
 }
