@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:news/app/data/models/news_article.dart';
 
 class NewsResponse {

@@ -4,11 +4,11 @@ import 'package:news/app/data/constant.dart';
 import '../models/news_response.dart';
 
 class NewsService extends GetConnect {
-  Future<NewsResponse?> getNews() async {
+  Future<NewsResponse?> getNews(String query) async {
     final response = await get(
       '${ApiConstant.baseUrl}${ApiConstant.topHeadlines}',
       query: {
-        'q': 'tesla',
+        'q': query,
         // 'from': '2026-01-01',
         // 'sortBy': 'relevancy',
         'apiKey': ApiConstant.apiKey,
@@ -21,5 +21,11 @@ class NewsService extends GetConnect {
 
     return NewsResponse.fromJson(response.body);
   }
+
+  Future<NewsResponse?> getNewsByCategory(String category) async {
+    final response = await get(
+      '${ApiConstant.baseUrl}/top-headlines',
+      query: {'category': category, 'apiKey': ApiConstant.apiKey},
+    );
+  }
 }
-  

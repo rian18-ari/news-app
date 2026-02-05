@@ -8,20 +8,40 @@ class HomeController extends GetxController {
   var articles = <NewsArticle>[].obs;
   var isLoading = true.obs;
 
+  final List<String> categories = [
+    "General",
+    "Business",
+    "Technology",
+    "Health",
+    "Science",
+    "Sports",
+    "Entertainment",
+    "indonesia"
+  ];
+
+  var selectedCategory = "General".obs;
+
   @override
   void onInit() {
     getNews();
     super.onInit();
   }
 
-  void getNews() async {
+  void updateCategory(String category) {
+    selectedCategory.value = category;
+    getNews(query: category);
+  }
+
+  void getNews({String query = ""}) async {
     try {
       isLoading(true);
       
       // Bersihkan list lama kalau mau refresh data
       articles.clear(); 
       
-      var response = await _newsService.getNews();
+      var response = await _newsService.getNewsByCategory(
+        selectedCategory.value.toLowerCase()
+      );
       
       if (response != null && response.articles != null) {
         // Menggunakan operator '!' karena kita sudah cek null di atas
