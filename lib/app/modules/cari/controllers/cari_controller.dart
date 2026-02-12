@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart';
 import 'package:news/app/data/models/news_article.dart';
 import 'package:news/app/data/services/news_service.dart';
 
 class CariController extends GetxController {
-  final searchController = TextEditingController();
-  final searchText = ''.obs;
-  final isLoading = false.obs;
-  final searchResults = <NewsArticle>[].obs;
-  final newsService = NewsService();
+  final NewsService newsService = Get.find<NewsService>();
+  final TextEditingController searchController = TextEditingController();
+  final FocusNode focusNode = FocusNode();
+
+  final RxString searchText = ''.obs;
+  final RxBool isLoading = false.obs;
+  final RxList<NewsArticle> searchResults = <NewsArticle>[].obs;
 
   @override
   void onInit() {
@@ -84,5 +87,27 @@ class CariController extends GetxController {
   void onClose() {
     searchController.dispose();
     super.onClose();
+  }
+
+  void onSearch(String query) async {
+    if (query.isEmpty) {
+      Get.snackbar("Error", "harap isi kolom pencarian");
+      return;
+    } 
+    isLoading.value = true;
+
+    try{
+      final response = await newsService.getNewsSearch(query);
+      if (response != null) {
+        searchResults.assignAll(response.articles);
+      } else {
+        searchResults.clear();
+      }
+    }catch(e){
+      print("Error searching news: $e");
+      searchResults.clear();
+    }finally{
+      isLoading.value = false;
+    }
   }
 }

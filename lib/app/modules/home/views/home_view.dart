@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:http/http.dart';
 import 'package:news/app/routes/app_pages.dart';
 import '../controllers/home_controller.dart';
 import 'package:news/app/data/models/news_article.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class HomeView extends GetView<HomeController> {
   const HomeView({super.key});
@@ -91,76 +89,100 @@ class HomeView extends GetView<HomeController> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Row(
+                children: 
+                  controller.categories.map((category) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: ChoiceChip(
+                        label: Text(category),
+                        selected: controller.selectedCategory.value == category,
+                        onSelected: (selected) {
+                          if (selected) {
+                            controller.updateCategory(category);
+                          }
+                        },
+                      ),
+                    );
+                  }).toList(),
+                
+              ),
               // HEADER: Breaking News
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "Breaking News",
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w800,
-                        color: Colors.black87,
+              Column(
+                children: [
+                  const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "Breaking News",
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w800,
+                              color: Colors.black87,
+                            ),
+                          ),
+                          Text(
+                            "View All",
+                            style: TextStyle(
+                              color: Colors.blueAccent,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    Text(
-                      "View All",
-                      style: TextStyle(
-                        color: Colors.blueAccent,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
+                ],
               ),
-              const SizedBox(height: 16),
-
-              // FEATURED CAROUSEL
-              SizedBox(
-                height: 240,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  itemCount: featuredArticles.length,
-                  itemBuilder: (context, index) {
-                    return _buildFeaturedCard(featuredArticles[index]);
-                  },
-                ),
-              ),
-
-              const SizedBox(height: 24),
-
-              // HEADER: Recent News
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16.0),
-                child: Text(
-                  "Recent News",
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w800,
-                    color: Colors.black87,
+                const SizedBox(height: 16),
+            
+                // FEATURED CAROUSEL
+                SizedBox(
+                  height: 240,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    itemCount: featuredArticles.length,
+                    itemBuilder: (context, index) {
+                      return _buildFeaturedCard(featuredArticles[index]);
+                    },
                   ),
                 ),
-              ),
-              const SizedBox(height: 12),
-
-              // RECENT LIST
-              ListView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                itemCount: recentArticles.length,
-                itemBuilder: (context, index) {
-                  return _buildRecentCard(recentArticles[index]);
-                },
-              ),
-            ],
-          ),
-        );
-      }),
+            
+                const SizedBox(height: 24),
+            
+                // HEADER: Recent News
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Text(
+                    "Recent News",
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w800,
+                      color: Colors.black87,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+            
+                // RECENT LIST
+                ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  itemCount: recentArticles.length,
+                  itemBuilder: (context, index) {
+                    return _buildRecentCard(recentArticles[index]);
+                  },
+                ),
+              ],
+            ),
+          );
+      }
+      )
     );
+    
   }
 
   Widget _buildFeaturedCard(NewsArticle article) {

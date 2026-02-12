@@ -9,8 +9,6 @@ class NewsService extends GetConnect {
       '${ApiConstant.baseUrl}${ApiConstant.topHeadlines}',
       query: {
         'q': query,
-        // 'from': '2026-01-01',
-        // 'sortBy': 'relevancy',
         'apiKey': ApiConstant.apiKey,
       },
     );
@@ -27,5 +25,27 @@ class NewsService extends GetConnect {
       '${ApiConstant.baseUrl}/top-headlines',
       query: {'category': category, 'apiKey': ApiConstant.apiKey},
     );
+
+     if (response.status.hasError || response.body == null) {
+      return null;
+    }
+
+    return NewsResponse.fromJson(response.body);
+  }
+
+  Future<NewsResponse?> getNewsSearch(String query) async {
+    final response = await get(
+      '${ApiConstant.baseUrl}${ApiConstant.topHeadlines}',
+      query: {
+        'q': query,
+        'apiKey': ApiConstant.apiKey,
+      },
+    );
+
+    if (response.status.hasError || response.body == null) {
+      return null;
+    }
+
+    return NewsResponse.fromJson(response.body);
   }
 }
